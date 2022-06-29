@@ -19,5 +19,11 @@ what software you'll need:
 - tty2oled code installed on your MiSTer. this is what sends the core info the MiSTer is running and the ESP32 reads.
 - something else i'm sure i'm forgetting
 
+# Work In Progress
+items i'm still working on:
+- add font library so that text that displays for cores that do not have images created are shown in a nicer way
+- ADD MORE GIFS!
+- add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself.
 
+# Demo
 https://www.youtube.com/watch?v=un_bDXi2HBI
