@@ -19,6 +19,15 @@ what software you'll need:
 - tty2oled code installed on your MiSTer. this is what sends the core info the MiSTer is running and the ESP32 reads.
 - something else i'm sure i'm forgetting
 
+# setup
+- follow venice's instructions on setting up tty2oled. tty2rgbmatrix arduino code watches for the same serial outputs. -> https://github.com/venice1200/MiSTer_tty2oled/wiki/Installation
+- setup arduino IDE including adding ESP32 support, and the libraries mentioned above.
+- current version looks for image files on the microcontroller's storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
+	- https://github.com/me-no-dev/arduino-esp32fs-plugin
+	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself.
+- flash your ESP32 with the tty2rgbmatrix.ino
+
+
 # Work In Progress
 items i'm still working on:
 - ADD MORE GIFS OF ARCADE CORES
