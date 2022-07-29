@@ -314,7 +314,7 @@ void loop() {
     else if (newCORE=="galagamw")     {Serial.println("read galaga");    strcpy(choosenGIF, "/gifs/galaga.gif"); }
     else if (newCORE=="mario")        {Serial.println("read mario");     strcpy(choosenGIF, "/gifs/mariobros.gif"); }
     else if (newCORE=="sinistar")     {Serial.println("read sinistar");  strcpy(choosenGIF, "/gifs/sinistar.gif"); }
-    else if (newCORE=="spyhunt")      {Serial.println("read spyhunter"); strcpy(choosenGIF, "/gifs/spyhunter.gif"); }
+    else if (newCORE=="spyhunt")      {Serial.println("read spyhunt"); strcpy(choosenGIF, "/gifs/spyhunter.gif"); }
     else if (newCORE=="tapper")       {Serial.println("read tapper");    strcpy(choosenGIF, "/gifs/tapper.gif"); }
     else if (newCORE=="zaxxon")       {Serial.println("read zaxxon");    strcpy(choosenGIF, "/gifs/zaxxon.gif"); }
 
