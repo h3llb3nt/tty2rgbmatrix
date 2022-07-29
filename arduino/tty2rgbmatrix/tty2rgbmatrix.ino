@@ -306,6 +306,7 @@ void loop() {
     else if (newCORE=="1942")         {Serial.println("read 1942s");     strcpy(choosenGIF, "/gifs/1942.gif"); }
     else if (newCORE=="atetris")      {Serial.println("read atetris");   strcpy(choosenGIF, "/gifs/Tetris_ATARI.gif"); }
     else if (newCORE=="blktiger")     {Serial.println("read blktiger");  strcpy(choosenGIF, "/gifs/blktiger.gif"); }
+    else if (newCORE=="btime")        {Serial.println("read btime");     strcpy(choosenGIF, "/gifs/burgertime.gif"); }
     else if (newCORE=="centiped")     {Serial.println("read centipede"); strcpy(choosenGIF, "/gifs/centipede.gif"); }
     else if (newCORE=="centiped3")    {Serial.println("read centipede"); strcpy(choosenGIF, "/gifs/centipede.gif"); }
     else if (newCORE=="dkong")        {Serial.println("read dkong");     strcpy(choosenGIF, "/gifs/donkeykong.gif"); }
