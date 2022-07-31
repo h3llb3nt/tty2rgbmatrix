@@ -7,7 +7,7 @@ this project is adapted from https://github.com/venice1200/MiSTer_tty2oled proje
 
 # hardware
 what hardware you'll need:
-- some kind of ESP32 (or equivalent) to interface with the MiSTer via USB and with the RGB matrix or matrices. im using a Trinity EPS32 board made by Brian Lough -> https://esp32trinity.com/
+- some kind of ESP32 (or equivalent) to interface with the MiSTer via USB and with the RGB matrix or matrices. im using a Trinity EPS32 board made by Brian Lough -> https://esp32trinity.com/ which is designed specifically for this purpose with the hub75 connector on the board. you can wire an esp32 (or whatever microcontroller) directly to hub75 panels but you'll need to figure out the pinout etc and your milage may vary. the trinity board is just the easiest way to do it in my opinion
 
 ![esp32 trinity board](docs/images/esp32trinity.jpeg "esp32 trinity board")
 
@@ -17,27 +17,27 @@ what hardware you'll need:
 
 ![hub75 rgb panel reverse](docs/images/example_hub75_panel_reverse.jpeg "hub75 rgb panel reverse")
 
-- a big enough powersupply to run them both
+- a big enough powersupply to run them both, usb power is NOT enough to run these panels. you MUST have an external powersupply
 
 ![power supply](docs/images/powersupply.jpeg "powerbrick")
 
-- optional: a sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online.
+- optional: a sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online
 
 # software
 what software you'll need:
-- arduino IDE or equivalent
+- arduino IDE or equivalent. the animated gif library is arduino compatible only at this point. i investigated doing it circuit python but didn't get too far
 - associated libraries:
 	- ESP32 HUB75 library by mrfaptastic -> https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA
 	- AnimatedGIF library by Larry Bank -> https://github.com/bitbank2/AnimatedGIF
-- tty2oled code installed on your MiSTer. this is what sends the core info the MiSTer is running and the ESP32 reads.
+- tty2oled code installed on your MiSTer. this is what sends the core info the MiSTer is running and the ESP32 reads
 - something else i'm sure i'm forgetting
 
 # setup
 - follow venice's instructions on setting up tty2oled. tty2rgbmatrix arduino code watches for the same serial outputs. -> https://github.com/venice1200/MiSTer_tty2oled/wiki/Installation
-- setup arduino IDE including adding ESP32 support, and the libraries mentioned above.
+- setup arduino IDE including adding ESP32 support, and the libraries mentioned above
 - current version looks for image files on the microcontroller's storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
 	- https://github.com/me-no-dev/arduino-esp32fs-plugin
-	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself.
+	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself
 - flash your ESP32 with the tty2rgbmatrix.ino
 
 
@@ -45,7 +45,7 @@ what software you'll need:
 items i'm still working on:
 - ADD MORE GIFS OF ARCADE CORES
 - add font library so that text that displays for cores that do not have images created are shown in a nicer way, perhaps scroll from right to left
-- modify code to use an interrupt so that marquee changes happen faster. currently the code has to wait for the gif cycle to finish before it will recognizet that the image should change and for longer gifs that is not ideal.
+- modify code to use an interrupt so that marquee changes happen faster. currently the code has to wait for the gif cycle to finish before it will recognize that the image should change and for longer gifs that is not ideal
 - esp32 usually only comes with 4MB flash and a portion of that is used for code storage. current images are already filling up available space so i need to either 
 	- a) add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself or 
 	- b) pull images directly from MiSTer like tty2oled does
