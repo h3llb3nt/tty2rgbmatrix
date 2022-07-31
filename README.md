@@ -11,6 +11,7 @@ what hardware you'll need:
 ![hub75 rgb panel](docs/images/example_hub75_panel.jpeg "hub75 rgb panel")
 ![hub75 rgb panel reverse](docs/images/example_hub75_panel_reverse.jpeg "hub75 rgb panel reverse")
 - a big enough powersupply to run them both
+![power supply](docs/images/powersupply.jpeg "powerbrick")
 - optional: a sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online.
 
 # software
