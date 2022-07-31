@@ -33,6 +33,8 @@ what software you'll need:
 - something else i'm sure i'm forgetting
 
 # setup
+![prototype setup](docs/images/prototype.jpeg "prototype")
+ 
 - follow venice's instructions on setting up tty2oled. tty2rgbmatrix arduino code watches for the same serial outputs. -> https://github.com/venice1200/MiSTer_tty2oled/wiki/Installation
 - setup arduino IDE including adding ESP32 support, and the libraries mentioned above
 - current version looks for image files on the microcontroller's storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
