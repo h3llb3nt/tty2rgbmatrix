@@ -47,8 +47,8 @@ items i'm still working on:
 - add font library so that text that displays for cores that do not have images created are shown in a nicer way, perhaps scroll from right to left
 - modify code to use an interrupt so that marquee changes happen faster. currently the code has to wait for the gif cycle to finish before it will recognizet that the image should change and for longer gifs that is not ideal.
 - esp32 usually only comes with 4MB flash and a portion of that is used for code storage. current images are already filling up available space so i need to either 
-	a) add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself or 
-	b) pull images directly from MiSTer like tty2oled does
+	- a) add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself or 
+	- b) pull images directly from MiSTer like tty2oled does
 
 # Future Options (aka not any time soon)
 - resize images/gifs that are not 128x32 'on the fly'
