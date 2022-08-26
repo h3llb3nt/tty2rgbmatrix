@@ -35,12 +35,12 @@ what software you'll need:
 # setup
 ![prototype setup](docs/images/prototype.jpeg "prototype")
 
-- follow venice's instructions on setting up tty2oled. tty2rgbmatrix arduino code watches for the same serial outputs. -> https://github.com/venice1200/MiSTer_tty2oled/wiki/Installation
 - setup arduino IDE including adding ESP32 support, and the libraries mentioned above
 - current version looks for image files on the microcontroller's storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
 	- https://github.com/me-no-dev/arduino-esp32fs-plugin
 	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself
 - flash your ESP32 with the tty2rgbmatrix.ino
+- follow venice's instructions on setting up tty2oled on your MiSTer. tty2oled's scripts run on the MiSTer linux environment and tell the microcontroller what core is running. that's all you need from tty2oled at this point. do not try to use the built in flash system of tty2oled because that is not the correct code for tty2rgbmatrix. the tty2rgbmatrix arduino code on this github must be added to your microcontroller separately thru arduinoIDE or other methods (vscode, etc) and it watches for the same serial outputs that are sent by the tty2oled scripts. -> https://github.com/venice1200/MiSTer_tty2oled/wiki/Installation
 
 
 # Work In Progress
