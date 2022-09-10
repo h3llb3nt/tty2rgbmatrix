@@ -304,6 +304,10 @@ void loop() {
     
     // -- Arcade Cores with images--
     else if (newCORE=="1942")         {Serial.println("read 1942s");     strcpy(choosenGIF, "/gifs/1942.gif"); }
+    else if (newCORE=="arkanoidj")    {Serial.println("read arkanoidj");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
+    else if (newCORE=="A.ARKANOID")   {Serial.println("read A.ARKANOID");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
+    else if (newCORE=="arkanoid")     {Serial.println("read arkanoid");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
+    else if (newCORE=="arkanoiduo")   {Serial.println("read arkanoiduo");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
     else if (newCORE=="atetris")      {Serial.println("read atetris");   strcpy(choosenGIF, "/gifs/Tetris_ATARI.gif"); }
     else if (newCORE=="blktiger")     {Serial.println("read blktiger");  strcpy(choosenGIF, "/gifs/blktiger.gif"); }
     else if (newCORE=="btime")        {Serial.println("read btime");     strcpy(choosenGIF, "/gifs/burgertime.gif"); }
