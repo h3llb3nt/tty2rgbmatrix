@@ -7,7 +7,19 @@ this project is adapted from https://github.com/venice1200/MiSTer_tty2oled proje
 
 # hardware
 what hardware you'll need:
-- some kind of ESP32 (or equivalent) to interface with the MiSTer via USB and with the RGB matrix or matrices. im using a Trinity EPS32 board made by Brian Lough -> https://esp32trinity.com/ which is designed specifically for this purpose with the hub75 connector on the board. you can wire an esp32 (or whatever microcontroller) directly to hub75 panels but you'll need to figure out the pinout etc and your milage may vary. the trinity board is just the easiest way to do it in my opinion
+- this project utilized the ESP32-HUB75-MatrixPanel-I2S-DMA library which has some requirements for which MCU you can use: "ESP32 Supported
+
+Espressif have kept the 'ESP32' name for all their chips for brand recognition, but their new variant MCU's are different to the ESP32 this library was built for.
+
+This library supports the original ESP32. That being the ESP-WROOM-32 module with ESP32‑D0WDQ6 chip from 2017. This MCU has 520kB of SRAM which is much more than all the recent 'reboots' of the ESP32 such as the S2, S3, C3 etc. <b>If you want to use this library, use with an original ESP32 as it has the most SRAM for DMA</b>.
+
+Support also exists for the ESP32-S2.
+
+ESP32-S3 is currently not supported (as of August 2022), but @mrfaptastic is working on this.
+
+RISC-V ESP32's (like the C3) are not, and will never be supported as they do not have parallel DMA output required for this library."
+
+im using a Trinity EPS32 board made by Brian Lough -> https://esp32trinity.com/ which is designed specifically for this purpose with the hub75 connector on the board. you can wire an esp32 (or whatever microcontroller) directly to hub75 panels but you'll need to figure out the pinout etc and your milage may vary. the trinity board is just the easiest way to do it in my opinion
 
 ![esp32 trinity board](docs/images/esp32trinity.jpeg "esp32 trinity board")
 
