@@ -1,11 +1,19 @@
-#include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
-#include <AnimatedGIF.h>
+//////////////////////////////////////////////////////////////
+/* tty2rgbmatrix sdcard edition 2022/09/18
+ * loads gif files from an sdcard and play them on an rgb matrix based on serial input from MiSTer fpga
+ * those code is know to work with arduino IDE 1.8.19 with the ESP32 package version 2.0.4 installed */
+//////////////////////////////////////////////////////////////
+
+// versions of the libraries used are commented below
+// use other versions at your own peril
+#include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>  //v2.0.7 by mrfaptastic verifed to work
+#include <AnimatedGIF.h>                      //v1.4.7 by larry bank verifed to work
 
 #define FILESYSTEM SD
-#include "SD.h"
+#include "SD.h"                               //v1.2.4
 #include "SPI.h"
 
-// Micro SD Card Module Pinout
+// Micro SD Card Module Pinout                // these pins below are known to work with this config on esp32 trinity boards by brian lough
 #define HSPI_MISO 32
 #define HSPI_MOSI 21 //trinity pin labeled SDA
 #define HSPI_SCLK 33 
@@ -13,7 +21,9 @@
 
 SPIClass *spi = NULL;
 
-// -------   Matrix Config   ------
+// ----------------- RGB MATRIX CONFIG ----------------- 
+// more panel setup is found in the void setup() function!
+
 const int panelResX = 64;        // Number of pixels wide of each INDIVIDUAL panel module.
 const int panelResY = 32;        // Number of pixels tall of each INDIVIDUAL panel module.
 const int panels_in_X_chain = 2; // Total number of panels in X
@@ -30,17 +40,21 @@ uint16_t myRED = dma_display->color565(255, 0, 0);
 uint16_t myGREEN = dma_display->color565(0, 255, 0);
 uint16_t myBLUE = dma_display->color565(0, 0, 255);
 
-// ------- String read config ----------
+
+// ----------------- STRING READ CONFIG ----------
 String newCORE = "";             // Received Text, from MiSTer without "\n\r" currently (2021-01-11)
 String currentCORE = "";         // Buffer String for Text change detection
 char newCOREArray[30]="";        // Array of char needed for some functions, see below "newCORE.toCharArray"
 
 
-// ------- ANIMATEDGIF LIBRARY STUFF -----------
+// ----------------- ANIMATEDGIF LIBRARY STUFF -----------
 AnimatedGIF gif;
 File f;
 int x_offset, y_offset;
 int16_t xPos = 0, yPos = 0; // Top-left pixel coord of GIF in matrix space
+
+
+// ----------------- GIF DRAW Gif Draw Functions -------------------------
 
 // Copy a horizontal span of pixels from a source buffer to an X,Y position
 // in matrix back buffer, applying horizontal clipping. Vertical clipping is
@@ -198,9 +212,9 @@ void ShowGIF(char *name)
     Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
     Serial.flush();
     while (gif.playFrame(true, NULL))
-    {      
+    { // leaving this break in here incase i need it for interrupting the the current playing gif in a future rev     
       // if ( (millis() - start_tick) > 8000) { // we'll get bored after about 8 seconds of the same looping gif
-      //  break;
+      //   break;
       // }
     }
     gif.close();
@@ -353,8 +367,7 @@ void setup() {
 
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  
   if (Serial.available()) {
     newCORE = Serial.readStringUntil('\n');                  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
     delay(10);
