@@ -70,12 +70,12 @@ items i'm still working on:
 # Demo
 https://youtu.be/un_bDXi2HBI
 
-# Thankyou's!
-- i want to thanks all the members of the misterfpga.org forum who have helped and encouraged me to keep this project going. especially venice, reallarry, elluigi, moondandy. 
-- i also want to thanks brian lough for giving me the bug with his tetris clock for using rgb matrix panels and for the trinity esp32 board he designed
+# Thank You!
+- i want to thanks all the members of the misterfpga.org forum who have helped and encouraged me to keep this project going; especially venice, reallarry, elluigi, moondandy and everyone else who built one of these things 
+- i also want to thanks brian lough for giving me the bug with his tetris clock for using rgb matrix panels and for designing the trinity esp32 board
 - mrfaptastic for the matrix panel arduino library
 - larry bank for the animated gif library
-- adafruit for years of inspiration for electronics projects
-- sorg for the MiSTer project
+- adafruit for years of inspiration for various electronics projects
+- sorg and all of the core developers on the MiSTer project
 - Lu from LusRetroSource and Bob from RetroRGB for blowing this up on twitter and youtube
 - and finally my wife and daughter for (humoring me by) ooohing and ahhhing at all my flashy lights
