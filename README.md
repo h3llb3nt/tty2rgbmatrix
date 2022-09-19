@@ -52,8 +52,7 @@ what software you'll need:
 	- ~~https://github.com/me-no-dev/arduino-esp32fs-plugin~~
 	- ~~This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself~~
 - flash your ESP32 with the tty2rgbmatrix_sd.ino
-- follow venice's instructions (https://github.com/venice1200/MiSTer_tty2x) on setting up tty2x on your MiSTer. tty2oled's scripts run on the MiSTer linux environment and tell your tty2rgbmatrix microcontroller what core is currently running. NOTE: do not use the built in microcontroller flash/setup system that tty2oled uses. that is not the correct code for tty2rgbmatrix.
-
+- follow venice's instructions (https://github.com/venice1200/MiSTer_tty2x) on setting up tty2x on your MiSTer. these scripts run on the MiSTer linux environment and output via usb/serial to the tty2rgbmatrix MCU what core is currently running. 
 
 # Work In Progress
 items i'm still working on:
