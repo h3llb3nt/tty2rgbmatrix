@@ -14,10 +14,24 @@
 #include "SPI.h"
 
 // Micro SD Card Module Pinout                // these pins below are known to work with this config on esp32 trinity boards by brian lough
-#define HSPI_MISO 32
-#define HSPI_MOSI 21 //trinity pin labeled SDA
-#define HSPI_SCLK 33 
-#define HSPI_CS 22   //trinity pin labeled SCL
+//sd  to tri
+//3v3 to 3v3
+//gnd to gnd
+//clk to 33
+//do  to 32
+//di  to sda
+//cs  to scl
+
+//#define HSPI_MISO 32
+//#define HSPI_MOSI 21 //trinity pin labeled SDA
+//#define HSPI_SCLK 33 
+//#define HSPI_CS 22   //trinity pin labeled SCL
+
+//my pin setup so my sdcard adapter (adafruit sdcard adapter) can just slot into the pin headers on the trinity board
+#define HSPI_MISO 21 //trinity pin labeled SDA
+#define HSPI_MOSI 32 
+#define HSPI_SCLK 22 //trinity pin labeled SCL
+#define HSPI_CS 33   
 
 SPIClass *spi = NULL;
 
@@ -395,6 +409,7 @@ void loop() {
     else if (newCORE=="digdug")       {Serial.println("read digdug");    strcpy(chosenGIF, "/gifs/digdug.gif"); }
     else if (newCORE=="galagamw")     {Serial.println("read galaga");    strcpy(chosenGIF, "/gifs/galagamw.gif"); }
     else if (newCORE=="mario")        {Serial.println("read mario");     strcpy(chosenGIF, "/gifs/mario.gif"); }
+    else if (newCORE=="mrdo")         {Serial.println("read mrdo");      strcpy(chosenGIF, "/gifs/mrdo.gif"); }
     else if (newCORE=="sinistar")     {Serial.println("read sinistar");  strcpy(chosenGIF, "/gifs/sinistar.gif"); }
     else if (newCORE=="spyhunt")      {Serial.println("read spyhunt");   strcpy(chosenGIF, "/gifs/spyhunt.gif"); }
     else if (newCORE=="tapper")       {Serial.println("read tapper");    strcpy(chosenGIF, "/gifs/tapper.gif"); }
