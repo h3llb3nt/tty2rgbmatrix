@@ -32,9 +32,7 @@ what hardware you'll need:
 
 ![sdcard adapter](https://cdn-shop.adafruit.com/970x728/254-03.jpg "sdcard")
 
-- optional: an enclosure depending on where you want your tty2rgbmatrix to go. i have included some fusion 3d files and STL files for a desktop enclosure i have created for your use if you wish. the desktop case includes a gap for...
-
-- optional: an optional sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online.
+- optional: an enclosure depending on where you want your tty2rgbmatrix to go. i have included some fusion 3d files and STL files for a desktop enclosure i have created (specificly sized for the panels, MCU and sdcard module I am using!) for your use if you wish. the desktop case also includes a gap for an optional sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online. size the sheet to your needs.
 
 # software
 what software you'll need:
