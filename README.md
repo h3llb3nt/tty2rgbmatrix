@@ -14,7 +14,7 @@ what hardware you'll need:
 	- ESP32-S3 is currently not supported (as of August 2022), but @mrfaptastic is working on this.
 	- RISC-V ESP32's (like the C3) are not, and will never be supported as they do not have parallel DMA output required for this library.
 
-- im using a Trinity EPS32 board made by Brian Lough -> https://esp32trinity.com/ which is designed specifically for this purpose with the hub75 connector on the board. you can wire an esp32 (or whatever microcontroller) directly to hub75 panels but you'll need to figure out the pinout etc and your milage may vary. the trinity board is just the easiest way to do it in my opinion
+- im using a Trinity EPS32 board made by Brian Lough -> https://esp32trinity.com/ which is designed specifically to interface with with the HUB75 rgb matrix panels. you can directly wire a compatible esp32 (see above warning on esp32 board that are compatible with the HUB75-MatrixPanel libaray) to HUB75 panels but you'll need to figure out the pinout, etc. and your milage may vary (YMMV). the trinity board is just the easiest way to do it in my opinion.
 
 ![esp32 trinity board](docs/images/esp32trinity.jpeg "esp32 trinity board")
 
@@ -24,11 +24,11 @@ what hardware you'll need:
 
 ![hub75 rgb panel reverse](docs/images/example_hub75_panel_reverse.jpeg "hub75 rgb panel reverse")
 
-- a big enough powersupply to run them both, usb power is NOT enough to run these panels. you MUST have an external powersupply
+- a big enough powersupply to run the MCU and RGB panels, usb power alone is NOT enough to run these panels. you MUST have an external powersupply
 
 ![power supply](docs/images/powersupply.jpeg "powerbrick")
 
-- an sdcard reader module (or at the very least a modified micro to standard sdcard adapter) and an sdcard (2 gig should be MORE than enough) for storing the image files. this attaches to the trinity board using the available pins near the barrel jack power input. see the sketch file for pinout details.
+- an sdcard reader module (or at the very least a modified micro to standard sdcard adapter) and an sdcard (2 gig should be MORE than enough) for storing the image files. this attaches to the trinity board using the available pins near the barrel jack power input. see the sketch file for pinout details. 
 
 ![sdcard adapter](https://cdn-shop.adafruit.com/970x728/254-03.jpg "sdcard")
 
@@ -36,11 +36,11 @@ what hardware you'll need:
 
 # software
 what software you'll need:
-- arduino IDE or equivalent. the animated gif library is arduino compatible only at this point. i investigated doing it circuit python but didn't get too far
+- arduino IDE or equivalent. the animated gif library is arduino compatible only at this point. i investigated doing it circuit python but didn't get too far.
 - associated libraries:
-	- ESP32 HUB75 library by mrfaptastic -> https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA
+	- ESP32 HUB75 MatrixPanel I2S DMA library by mrfaptastic -> https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA
 	- AnimatedGIF library by Larry Bank -> https://github.com/bitbank2/AnimatedGIF
-- venice, the creator of tty2oled that started this whole thing, has created a modified version called tty2x that simplifies what it sends from the MiSTer (as far as the active core) to the MCU. this needs to be setup on your MiSTer.
+- venice, the creator of tty2oled that started this whole thing, has created a simplified version called tty2x that simplifies what it sends from the MiSTer (as far as the active core) to the MCU. this needs to be setup on your MiSTer -> https://github.com/venice1200/MiSTer_tty2x
 
 # software setup
 ![prototype setup](docs/images/prototype.jpeg "prototype")
