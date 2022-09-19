@@ -78,4 +78,4 @@ https://youtu.be/un_bDXi2HBI
 - adafruit for years of inspiration for various electronics projects
 - sorg and all of the core developers on the MiSTer project
 - Lu from LusRetroSource and Bob from RetroRGB for blowing this up on twitter and youtube
-- and finally my wife and daughter for (humoring me by) ooohing and ahhhing at all my flashy lights
+- and finally my wife, my daughter, and my friend theyellowdevil for (humoring me by) ooohing and ahhhing at all my flashy lights
