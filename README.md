@@ -49,11 +49,11 @@ what software you'll need:
 
 - (i'm working on a full installation guide from zero to hero but its taking some time, the basics are below)
 - setup arduino IDE (including adding ESP32 support if you are using an ESP32 based microcontroller) and the libraries mentioned above
-- the main version of tty2rgbmatrix has moved to using an sdcard, rather than the built in MCU spiffs, for storage as it ran out of space very quickly. the following instructions are no longer necessary if you are using an sdcard. 
+- the main version of tty2rgbmatrix has moved to using an sdcard, rather than the built in MCU spiffs, for storage as it ran out of space very quickly. the following instructions on uploading gifs directly to the MCU spiffs storage are no longer necessary if you are using an sdcard. 
   ~~current version of the arduino sketch looks for image files on the microcontroller's built-in storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:~~
 	- ~~https://github.com/me-no-dev/arduino-esp32fs-plugin~~
 	- ~~This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself~~
-- flash your ESP32 with the tty2rgbmatrix.ino
+- flash your ESP32 with the tty2rgbmatrix_sd.ino
 - follow venice's instructions (https://github.com/venice1200/MiSTer_tty2x) on setting up tty2x on your MiSTer. tty2oled's scripts run on the MiSTer linux environment and tell your tty2rgbmatrix microcontroller what core is currently running. NOTE: do not use the built in microcontroller flash/setup system that tty2oled uses. that is not the correct code for tty2rgbmatrix.
 
 
@@ -62,8 +62,8 @@ items i'm still working on:
 - ADD MORE GIFS OF ARCADE CORES
 - add font library so that text that displays for cores that do not have images created are shown in a nicer way, perhaps scroll from right to left
 - modify code to use an interrupt so that marquee changes happen faster. currently the code has to wait for the gif cycle to finish before it will recognize that the image should change and for longer gifs that is not ideal
-- esp32 usually only comes with 4MB flash and a portion of that is used for code storage. current images are already filling up available space so i need to either 
-	- a) add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself or 
+- esp32 usually only comes with 4MB flash and a portion of that is used for code storage. current images are already filling up available space so i need to either
+	- a) COMPLETED ~~add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself~~ or 
 	- b) pull images directly from MiSTer like tty2oled does
 
 # Future Options (aka not any time soon)
