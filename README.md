@@ -3,7 +3,7 @@ MiSTer fpga add-on showing text, pictures or animated gifs on an RGB matrix pane
 
 ![mister_logo](docs/images/mister_logo.jpeg "mister_logo")
  
-this project is adapted from https://github.com/venice1200/MiSTer_tty2oled project to show mister core information on a separate display. i had an RGB matrix panel from another project lying around and figured i'd see what i could do. 
+this project is adapted from https://github.com/venice1200/MiSTer_tty2oled project to show mister core information on a separate display. i had an RGB matrix panel from another project lying around and figured i'd see what i could do. it has evolved from using the built in MCU flash storage to now using an external SDcard. 
 
 # hardware
 what hardware you'll need:
@@ -69,3 +69,13 @@ items i'm still working on:
 
 # Demo
 https://youtu.be/un_bDXi2HBI
+
+# Thankyou's!
+- i want to thanks all the members of the misterfpga.org forum who have helped and encouraged me to keep this project going. especially venice, reallarry, elluigi, moondandy. 
+- i also want to thanks brian lough for giving me the bug with his tetris clock for using rgb matrix panels and for the trinity esp32 board he designed
+- mrfaptastic for the matrix panel arduino library
+- larry bank for the animated gif library
+- adafruit for years of inspiration for electronics projects
+- sorg for the MiSTer project
+- Lu from LusRetroSource and Bob from RetroRGB for blowing this up on twitter and youtube
+- and finally my wife and daughter for (humoring me by) ooohing and ahhhing at all my flashy lights
