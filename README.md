@@ -32,7 +32,9 @@ what hardware you'll need:
 
 ![sdcard adapter](https://cdn-shop.adafruit.com/970x728/254-03.jpg "sdcard")
 
-- optional: a sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online
+- optional: an enclosure depending on where you want your tty2rgbmatrix to go. i have included some fusion 3d files and STL files for a desktop enclosure i have created for your use if you wish. the desktop case includes a gap for...
+
+- optional: an optional sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online.
 
 # software
 what software you'll need:
@@ -40,18 +42,19 @@ what software you'll need:
 - associated libraries:
 	- ESP32 HUB75 library by mrfaptastic -> https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA
 	- AnimatedGIF library by Larry Bank -> https://github.com/bitbank2/AnimatedGIF
-- tty2oled code installed on your MiSTer. this is what sends the core info the MiSTer is running and the ESP32 reads
-- something else i'm sure i'm forgetting
+- venice, the creator of tty2oled that started this whole thing, has created a modified version called tty2x that simplifies what it sends from the MiSTer (as far as the active core) to the MCU. this needs to be setup on your MiSTer.
 
-# setup
+# software setup
 ![prototype setup](docs/images/prototype.jpeg "prototype")
 
+- (i'm working on a full installation guide from zero to hero but its taking some time, the basics are below)
 - setup arduino IDE (including adding ESP32 support if you are using an ESP32 based microcontroller) and the libraries mentioned above
-- current version of the arduino sketch looks for image files on the microcontroller's built-in storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
+- the main version of tty2rgbmatrix has moved to using an sdcard, rather than the built in MCU spiffs, for storage as it ran out of space very quickly. the following instructions are no longer necessary if you are using an sdcard. 
+  ~~current version of the arduino sketch looks for image files on the microcontroller's built-in storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
 	- https://github.com/me-no-dev/arduino-esp32fs-plugin
-	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself
+	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself~~
 - flash your ESP32 with the tty2rgbmatrix.ino
-- follow venice's instructions ( https://github.com/venice1200/MiSTer_tty2oled/wiki/Installation ) on setting up tty2oled on your MiSTer. tty2oled's scripts run on the MiSTer linux environment and tell your tty2rgbmatrix microcontroller what core is currently running. NOTE: do not use the built in microcontroller flash/setup system that tty2oled uses. that is not the correct code for tty2rgbmatrix.
+- follow venice's instructions (https://github.com/venice1200/MiSTer_tty2x) on setting up tty2x on your MiSTer. tty2oled's scripts run on the MiSTer linux environment and tell your tty2rgbmatrix microcontroller what core is currently running. NOTE: do not use the built in microcontroller flash/setup system that tty2oled uses. that is not the correct code for tty2rgbmatrix.
 
 
 # Work In Progress
