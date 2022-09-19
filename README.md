@@ -28,6 +28,10 @@ what hardware you'll need:
 
 ![power supply](docs/images/powersupply.jpeg "powerbrick")
 
+- optional: an sdcard (2 gig should be MORE than enough) and an sdcard reader module (or at the very least a modified micro to standard sdcard adapter) for storing the GIF files. this attaches to the trinity board using the extra available pins near the barrel jack power input.
+
+![sdcard adapter](https://cdn-shop.adafruit.com/970x728/254-03.jpg "sdcard")
+
 - optional: a sheet or piece of LED diffusing acrlyic. you can get these from TAP plastics or other places online
 
 # software
