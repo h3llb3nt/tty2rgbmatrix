@@ -50,9 +50,9 @@ what software you'll need:
 - (i'm working on a full installation guide from zero to hero but its taking some time, the basics are below)
 - setup arduino IDE (including adding ESP32 support if you are using an ESP32 based microcontroller) and the libraries mentioned above
 - the main version of tty2rgbmatrix has moved to using an sdcard, rather than the built in MCU spiffs, for storage as it ran out of space very quickly. the following instructions are no longer necessary if you are using an sdcard. 
-  ~~current version of the arduino sketch looks for image files on the microcontroller's built-in storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:
-	- https://github.com/me-no-dev/arduino-esp32fs-plugin
-	- This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself~~
+  ~~current version of the arduino sketch looks for image files on the microcontroller's built-in storage. this requires using SPIFFS and manually uploading the images via an ESP32 Sketch Data Upload Tool in the Arduino IDE:~~
+	- ~~https://github.com/me-no-dev/arduino-esp32fs-plugin~~
+	- ~~This tool will upload the contents of the data/ directory in the sketch folder onto the ESP32 itself~~
 - flash your ESP32 with the tty2rgbmatrix.ino
 - follow venice's instructions (https://github.com/venice1200/MiSTer_tty2x) on setting up tty2x on your MiSTer. tty2oled's scripts run on the MiSTer linux environment and tell your tty2rgbmatrix microcontroller what core is currently running. NOTE: do not use the built in microcontroller flash/setup system that tty2oled uses. that is not the correct code for tty2rgbmatrix.
 
