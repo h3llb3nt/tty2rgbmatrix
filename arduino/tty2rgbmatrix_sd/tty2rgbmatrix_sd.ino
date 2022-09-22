@@ -1,3 +1,20 @@
+///////////////////////////////////////////////////////////////
+/* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+* You can download the latest version of this code from:
+* https://github.com/h3llb3nt/tty2rgbmatrix
+*///////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////
 /* tty2rgbmatrix sdcard edition 2022/09/18
  * loads gif files from an sdcard and play them on an rgb matrix based on serial input from MiSTer fpga
@@ -396,8 +413,8 @@ void loop() {
     
     // -- Menu Core --
     else if (newCORE=="MENU")         {Serial.println("read MENU");       strcpy(chosenGIF, "/gifs/menu.gif"); }
-    
-    // -- Arcade Cores with images--
+        
+    // -- Arcade Cores with images by h3llb3nt--
     else if (newCORE=="1942")         {Serial.println("read 1942s");     strcpy(chosenGIF, "/gifs/1942.gif"); }
     else if (newCORE=="atetris")      {Serial.println("read atetris");   strcpy(chosenGIF, "/gifs/atetris.gif"); }
     else if (newCORE=="blktiger")     {Serial.println("read blktiger");  strcpy(chosenGIF, "/gifs/blktiger.gif"); }
@@ -415,6 +432,30 @@ void loop() {
     else if (newCORE=="tapper")       {Serial.println("read tapper");    strcpy(chosenGIF, "/gifs/tapper.gif"); }
     else if (newCORE=="zaxxon")       {Serial.println("read zaxxon");    strcpy(chosenGIF, "/gifs/zaxxon.gif"); }
     else if (newCORE=="arkanoid")     {Serial.println("read arkanoid");  strcpy(chosenGIF, "/gifs/arkanoid.gif"); }
+
+    // -- Arcade Cores with images by eLLuigi
+    else if (newCORE=="aliensyn")     {Serial.println("read aliensyn");    strcpy(chosenGIF, "/gifs/elluigi/ARCADE_AlienSyndrome.gif"); }
+    else if (newCORE=="avsp")         {Serial.println("read avsp");        strcpy(chosenGIF, "/gifs/elluigi/ARCADE_AlienVsPredatorTitle01.gif"); }
+    else if (newCORE=="altbeast")     {Serial.println("read altbeast");    strcpy(chosenGIF, "/gifs/elluigi/ARCADE_AlteredBeast.gif"); }
+    else if (newCORE=="ddragon")      {Serial.println("read ddragon");     strcpy(chosenGIF, "/gifs/elluigi/ARCADE_DoubleDragon01.gif"); }
+    else if (newCORE=="dstlk")        {Serial.println("read dstlk");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_NEOGEO_Darkstalkers01_Bishamon_RattenJager.gif"); }
+    else if (newCORE=="pacman")       {Serial.println("read pacman");      strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Pacman02.gif"); }
+    else if (newCORE=="pengo")        {Serial.println("read pengo");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Pengo02.gif"); }
+    else if (newCORE=="roadf")        {Serial.println("read roadf");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_RoadFighter.gif"); }
+    else if (newCORE=="rtype")        {Serial.println("read rtype");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Rtype01.gif"); }
+    else if (newCORE=="rygar")        {Serial.println("read rygar");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Rygar.gif"); }
+    else if (newCORE=="shinobi")      {Serial.println("read shinobi");     strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Shinobi02.gif"); }
+    else if (newCORE=="sf")           {Serial.println("read sf2");         strcpy(chosenGIF, "/gifs/elluigi/ARCADE_StreetFighter01.gif"); }
+    else if (newCORE=="superhangon")  {Serial.println("read superhangon"); strcpy(chosenGIF, "/gifs/elluigi/ARCADE_SuperHangOn01.gif"); }
+    else if (newCORE=="tigeroad")     {Serial.println("read tigeroad");    strcpy(chosenGIF, "/gifs/elluigi/ARCADE_TigerRoad.gif"); }
+    else if (newCORE=="timeplt")      {Serial.println("read timeplt");     strcpy(chosenGIF, "/gifs/elluigi/ARCADE_TimePilot.gif"); }
+    else if (newCORE=="vigilant")     {Serial.println("read vigilant");    strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Vigilante02.gif"); }
+    else if (newCORE=="willow")       {Serial.println("read willow");      strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Willow.gif"); }
+    else if (newCORE=="contra")       {Serial.println("read contra");      strcpy(chosenGIF, "/gifs/elluigi/NES_Contra02.gif"); }
+    
+    // NEOGEO Cores with images by eLLuigi
+    else if (newCORE=="MetalSlug")      {Serial.println("read MetalSlug");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_NEOGEO_MetalSlugFire05_Shabazz.gif"); }
+    else if (newCORE=="NeoTurfMasters") {Serial.println("read NeoTurfMasters");  strcpy(chosenGIF, "/gifs/elluigi/ARCADE_NEOGEO_NeoTurfMasters_ga12.gif"); }
 
     // -- Computer Cores --
     else if (newCORE=="AcornAtom")    ;//do something
