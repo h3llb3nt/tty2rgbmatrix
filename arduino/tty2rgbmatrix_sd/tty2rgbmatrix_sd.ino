@@ -80,6 +80,7 @@ char newCOREArray[30]="";        // Array of char needed for some functions, see
 
 // ----------------- ANIMATEDGIF LIBRARY STUFF -----------
 AnimatedGIF gif;
+bool animated_flag;
 File f;
 int x_offset, y_offset;
 int16_t xPos = 0, yPos = 0; // Top-left pixel coord of GIF in matrix space
@@ -230,7 +231,7 @@ int32_t GIFSeekFile(GIFFILE *pFile, int32_t iPosition)
 
 unsigned long start_tick = 0;
 
-void ShowGIF(char *name)
+void ShowGIF(char *name, bool animated)
 {
   start_tick = millis();
    
@@ -242,12 +243,50 @@ void ShowGIF(char *name)
     if (y_offset < 0) y_offset = 0;
     Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
     Serial.flush();
-    while (gif.playFrame(true, NULL))
-    { // leaving this break in here incase i need it for interrupting the the current playing gif in a future rev     
-      // if ( (millis() - start_tick) > 8000) { // we'll get bored after about 8 seconds of the same looping gif
-      //   break;
-      // }
+    if (animated) 
+    {
+      Serial.println("animated gif flag found, playing whole gif");
+      while(gif.playFrame(true, NULL))
+      {
+        //keep on playing unless...
+        if (Serial.available()) 
+        {
+          newCORE = Serial.readStringUntil('\n');                  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
+          Serial.println(newCORE);
+          if (newCORE!=currentCORE) 
+          {
+            break;
+          }
+        }
+      }
     }
+    else 
+    {
+      Serial.println("static gif flag found, playing 1st frame of gif");
+      while (!gif.playFrame(true, NULL))
+      { // leaving this break in here incase i need it for interrupting the the current playing gif in a future rev     
+        if ( (millis() - start_tick) > 10000) // play first frame of non-animated gif and wait 10 seconds
+        { 
+          //Serial.println("times up! breaking from play loop!");
+          break;
+        }
+        else
+        {
+          Serial.print(".");
+          if (Serial.available())
+          {
+            newCORE = Serial.readStringUntil('\n');  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
+            Serial.println(newCORE);
+            if (newCORE!=currentCORE)
+            {
+              break;
+            }
+          }
+          gif.reset();
+        }
+      }
+    }
+    Serial.println("closing gif file");
     gif.close();
   }
 
@@ -332,6 +371,8 @@ void setup() {
 
   // list files in /gifs folder to serial output
   listDir(SD, "/gifs", 0);
+  listDir(SD, "/gifs/elluigi", 0);
+  listDir(SD, "/gifs/pixelcade", 0); 
 
   // initialize gif object
   gif.begin(LITTLE_ENDIAN_PIXELS);
@@ -371,17 +412,17 @@ void setup() {
   
   //screen startup test (watch for dead or misfiring pixels)
   dma_display->fillScreen(myBLACK);
-  delay(1000);
+  delay(500);
   dma_display->fillScreen(myRED);
-  delay(1000);
+  delay(500);
   dma_display->fillScreen(myGREEN);
-  delay(1000);
+  delay(500);
   dma_display->fillScreen(myBLUE);
-  delay(1000);
+  delay(500);
   dma_display->fillScreen(myWHITE);
-  delay(1000);
+  delay(500);
   dma_display->clearScreen();
-  delay(1000);
+  delay(500);
   
   dma_display->setCursor(0, 0);
   dma_display->println("MiSTer FPGA");
@@ -408,11 +449,15 @@ void loop() {
   if (newCORE!=currentCORE)           // Proceed only if Core Name changed
   {                                    
     Serial.printf("Running a check because %s is oldcore, %s is newcore\n", String(currentCORE), String(newCORE));
+    Serial.printf("setting animated flag to 1 since we assume animated");
+    animated_flag = true;
     // -- First Transmission --
     if (newCORE.endsWith("QWERTZ"));  // TESTING: Process first Transmission after PowerOn/Reboot.                 
     
     // -- Menu Core --
     else if (newCORE=="MENU")         {Serial.println("read MENU");       strcpy(chosenGIF, "/gifs/menu.gif"); }
+    else if (newCORE=="hellbent")         {Serial.println("read hellbent");   strcpy(chosenGIF, "/gifs/h3llb3nt.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="error")        {Serial.println("read error");      strcpy(chosenGIF, "/gifs/error.gif"); }
         
     // -- Arcade Cores with images by h3llb3nt--
     else if (newCORE=="1942")         {Serial.println("read 1942s");     strcpy(chosenGIF, "/gifs/1942.gif"); }
@@ -516,11 +561,23 @@ void loop() {
   currentCORE=newCORE;  // Update Buffer
 
   //no core change, show the current currentCORE gif
-  Serial.printf("%s is oldcore, %s is newcore, %s is chosenGIF\n", String(currentCORE), String(newCORE), chosenGIF);
+  //Serial.printf("%s is oldcore, %s is newcore, %s is chosenGIF\n", String(currentCORE), String(newCORE), chosenGIF);
 
   if (strcmp(chosenGIF,"no-match")) 
   {
-    ShowGIF(chosenGIF);
+    if (SD.exists(chosenGIF)) 
+    {
+      ShowGIF(chosenGIF,animated_flag);
+    }
+    else
+    {
+      Serial.printf("IMAGE FILE %s NOT FOUND!\n", chosenGIF);
+      dma_display->clearScreen();
+      dma_display->setCursor(0, 0);
+      dma_display->print(chosenGIF);
+      dma_display->println(" not found");
+      delay(3000);
+    }
   } 
   else 
   {
