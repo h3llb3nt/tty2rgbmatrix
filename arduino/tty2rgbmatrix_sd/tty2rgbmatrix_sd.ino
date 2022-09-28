@@ -456,11 +456,11 @@ void loop() {
     
     // -- Menu Core --
     else if (newCORE=="MENU")         {Serial.println("read MENU");       strcpy(chosenGIF, "/gifs/menu.gif"); }
-    else if (newCORE=="hellbent")         {Serial.println("read hellbent");   strcpy(chosenGIF, "/gifs/h3llb3nt.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="hellbent")     {Serial.println("read hellbent");   strcpy(chosenGIF, "/gifs/h3llb3nt.gif"); animated_flag=!animated_flag; }
     else if (newCORE=="error")        {Serial.println("read error");      strcpy(chosenGIF, "/gifs/error.gif"); }
         
     // -- Arcade Cores with images by h3llb3nt--
-    else if (newCORE=="1942")         {Serial.println("read 1942s");     strcpy(chosenGIF, "/gifs/1942.gif"); }
+    else if (newCORE=="1942")         {Serial.println("read 1942");     strcpy(chosenGIF, "/gifs/1942.gif"); }
     else if (newCORE=="atetris")      {Serial.println("read atetris");   strcpy(chosenGIF, "/gifs/atetris.gif"); }
     else if (newCORE=="blktiger")     {Serial.println("read blktiger");  strcpy(chosenGIF, "/gifs/blktiger.gif"); }
     else if (newCORE=="btime")        {Serial.println("read btime");     strcpy(chosenGIF, "/gifs/btime.gif"); }
@@ -496,11 +496,44 @@ void loop() {
     else if (newCORE=="timeplt")      {Serial.println("read timeplt");     strcpy(chosenGIF, "/gifs/elluigi/ARCADE_TimePilot.gif"); }
     else if (newCORE=="vigilant")     {Serial.println("read vigilant");    strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Vigilante02.gif"); }
     else if (newCORE=="willow")       {Serial.println("read willow");      strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Willow.gif"); }
-    else if (newCORE=="contra")       {Serial.println("read contra");      strcpy(chosenGIF, "/gifs/elluigi/NES_Contra02.gif"); }
+    //else if (newCORE=="contra")       {Serial.println("read contra");      strcpy(chosenGIF, "/gifs/elluigi/NES_Contra02.gif"); }
     
     // NEOGEO Cores with images by eLLuigi
     else if (newCORE=="MetalSlug")      {Serial.println("read MetalSlug");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_NEOGEO_MetalSlugFire05_Shabazz.gif"); }
     else if (newCORE=="NeoTurfMasters") {Serial.println("read NeoTurfMasters");  strcpy(chosenGIF, "/gifs/elluigi/ARCADE_NEOGEO_NeoTurfMasters_ga12.gif"); }
+
+    // -- Arcade Cores with PixelCade images
+    else if (newCORE=="baddudes")       {Serial.println("read baddudes");   strcpy(chosenGIF, "/gifs/pixelcade/pcbdduds.gif"); }
+    else if (newCORE=="dkongjr")        {Serial.println("read dkongjr");    strcpy(chosenGIF, "/gifs/pixelcade/pcdkjr.gif"); }
+    else if (newCORE=="gunsmoke")       {Serial.println("read gunsmoke");   strcpy(chosenGIF, "/gifs/pixelcade/pcgnsmok.gif"); }
+    else if (newCORE=="punisher")       {Serial.println("read punisher");   strcpy(chosenGIF, "/gifs/pixelcade/pcpunish.gif"); }
+    else if (newCORE=="robocop")        {Serial.println("read robocop");    strcpy(chosenGIF, "/gifs/pixelcade/pcrobocp.gif"); }
+    else if (newCORE=="sf2")            {Serial.println("read sf2");        strcpy(chosenGIF, "/gifs/pixelcade/pcsf2.gif"); }
+    else if (newCORE=="xmvsf")          {Serial.println("read xmvsf");      strcpy(chosenGIF, "/gifs/pixelcade/pcxmenvsstreet.gif"); }
+
+    // -- non-animated images for arcade cores
+    else if (newCORE=="aerofgt")        {Serial.println("read aerofgt");    strcpy(chosenGIF, "/gifs/static/aerofgts.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="afighter")       {Serial.println("read afighter");   strcpy(chosenGIF, "/gifs/static/afighter.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="alibaba")        {Serial.println("read alibaba");    strcpy(chosenGIF, "/gifs/static/alibaba.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="alphamis")       {Serial.println("read alphamis");   strcpy(chosenGIF, "/gifs/static/alphamis.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="amatelas")       {Serial.println("read amatelas");   strcpy(chosenGIF, "/gifs/static/amatelas.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="amidars")        {Serial.println("read amidars");    strcpy(chosenGIF, "/gifs/static/amidars.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="armorcar")       {Serial.println("read armorcar");   strcpy(chosenGIF, "/gifs/static/armorcar.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="armwar")         {Serial.println("read armwar");     strcpy(chosenGIF, "/gifs/static/armwar.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="astdelux")       {Serial.println("read astdelux");   strcpy(chosenGIF, "/gifs/static/astdelux.gif"); animated_flag=!animated_flag; } //no core yet
+    else if (newCORE=="asteroid")       {Serial.println("read asteroid");   strcpy(chosenGIF, "/gifs/static/asteroid.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="athena")         {Serial.println("read athena");     strcpy(chosenGIF, "/gifs/static/athena.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="aurail")         {Serial.println("read aurail");     strcpy(chosenGIF, "/gifs/static/aurail.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="azurian")        {Serial.println("read azurian");    strcpy(chosenGIF, "/gifs/static/azurian.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="bagman")         {Serial.println("read bagman");     strcpy(chosenGIF, "/gifs/static/bagman.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="ballbomb")       {Serial.println("read ballbomb");   strcpy(chosenGIF, "/gifs/static/ballbomb.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="bayroute")       {Serial.println("read bayroute");   strcpy(chosenGIF, "/gifs/static/bayroute.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="berzerk")        {Serial.println("read berzerk");    strcpy(chosenGIF, "/gifs/static/berzerk.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="birdiy")         {Serial.println("read birdiy");     strcpy(chosenGIF, "/gifs/static/birdiy.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="birdtry")        {Serial.println("read birdtry");    strcpy(chosenGIF, "/gifs/static/birdtry.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="bosconian")      {Serial.println("read bosconian");  strcpy(chosenGIF, "/gifs/static/bosco.gif"); animated_flag=!animated_flag; } //no core yet but i love this game
+    else if (newCORE=="mspacman")       {Serial.println("read mspacman");   strcpy(chosenGIF, "/gifs/static/mspacman.gif"); animated_flag=!animated_flag; }
+    
 
     // -- Computer Cores --
     else if (newCORE=="AcornAtom")    ;//do something
@@ -527,8 +560,9 @@ void loop() {
     else if (newCORE=="GAMEBOY")      ;//do something
     else if (newCORE=="GBA")          ;//do something
     else if (newCORE=="Genesis")      {Serial.println("read Genesis");    strcpy(chosenGIF, "/gifs/genesis.gif"); }
-    else if (newCORE=="MEGACD")       ;//do something
-    else if (newCORE=="NEOGEO")       ;//do something
+    //else if (newCORE=="MEGACD")       ;//do something
+    else if (newCORE=="MEGACD")       {Serial.println("read MEGACD");      strcpy(chosenGIF, "/gifs/pixelcade/pcsoniccd.gif"); }
+    else if (newCORE=="NEOGEO")       {Serial.println("read NEOGEO");    strcpy(chosenGIF, "/gifs/pixelcade/pcneogeo.gif"); }
     else if (newCORE=="NES")          ;//do something
     else if (newCORE=="ODYSSEY")      ;//do something
     else if (newCORE=="ODYSSEY")      ;//do something
