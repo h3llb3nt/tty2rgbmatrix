@@ -490,7 +490,7 @@ void loop() {
     else if (newCORE=="rtype")        {Serial.println("read rtype");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Rtype01.gif"); }
     else if (newCORE=="rygar")        {Serial.println("read rygar");       strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Rygar.gif"); }
     else if (newCORE=="shinobi")      {Serial.println("read shinobi");     strcpy(chosenGIF, "/gifs/elluigi/ARCADE_Shinobi02.gif"); }
-    else if (newCORE=="sf")           {Serial.println("read sf2");         strcpy(chosenGIF, "/gifs/elluigi/ARCADE_StreetFighter01.gif"); }
+    else if (newCORE=="sf")           {Serial.println("read sf");         strcpy(chosenGIF, "/gifs/elluigi/ARCADE_StreetFighter01.gif"); }
     else if (newCORE=="superhangon")  {Serial.println("read superhangon"); strcpy(chosenGIF, "/gifs/elluigi/ARCADE_SuperHangOn01.gif"); }
     else if (newCORE=="tigeroad")     {Serial.println("read tigeroad");    strcpy(chosenGIF, "/gifs/elluigi/ARCADE_TigerRoad.gif"); }
     else if (newCORE=="timeplt")      {Serial.println("read timeplt");     strcpy(chosenGIF, "/gifs/elluigi/ARCADE_TimePilot.gif"); }
