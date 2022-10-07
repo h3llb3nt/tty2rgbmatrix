@@ -275,7 +275,7 @@ void ShowGIF(char *name, bool animated)
         }
         else
         {
-          Serial.print(".");
+          //Serial.print(".");
           if (Serial.available())
           {
             newCORE = Serial.readStringUntil('\n');  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
