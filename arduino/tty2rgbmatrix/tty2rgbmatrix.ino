@@ -16,6 +16,15 @@
 *///////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////
+/* change notes
+ * 2022/10/07
+ * modified code to not use else if table to identity core sent by mister and set appropriate gif file.
+ * we use /animated and /static folders and 0-9,A-Z subfolders for images and these are named the same
+ * as the core name sent by MiSTer. this allows easier lookup using a simplier check and allows for static
+ * image fallback if animated does not exist or text display fallback if no image exists on card.
+ * folder structure on SDcard looks like this:
+ * SDCARDROOT
+*/
 /* tty2rgbmatrix sdcard edition 2022/09/18
  * loads gif files from an sdcard and play them on an rgb matrix based on serial input from MiSTer fpga
  * those code is know to work with arduino IDE 1.8.19 with the ESP32 package version 2.0.4 installed */
