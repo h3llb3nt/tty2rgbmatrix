@@ -1,77 +1,96 @@
-/*******************************************************************
-    ESP32 Trinity - https://github.com/witnessmenow/ESP32-Trinity
- *******************************************************************/
+///////////////////////////////////////////////////////////////
+/* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+* You can download the latest version of this code from:
+* https://github.com/h3llb3nt/tty2rgbmatrix
+*///////////////////////////////////////////////////////////////
 
-// ----------------------------
-// Additional Libraries - each one of these will need to be installed.
-// ----------------------------
+//////////////////////////////////////////////////////////////
+/* tty2rgbmatrix sdcard edition 2022/09/18
+ * loads gif files from an sdcard and play them on an rgb matrix based on serial input from MiSTer fpga
+ * those code is know to work with arduino IDE 1.8.19 with the ESP32 package version 2.0.4 installed */
+//////////////////////////////////////////////////////////////
 
-#include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
+// versions of the libraries used are commented below
+// use other versions at your own peril
+#include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>  //v2.0.7 by mrfaptastic verifed to work
+#include <AnimatedGIF.h>                      //v1.4.7 by larry bank verifed to work
 
-// This is the library for interfacing with the display
+#define FILESYSTEM SD
+#include "SD.h"                               //v1.2.4
+#include "SPI.h"
 
-// Can be installed from the library manager (Search for "ESP32 MATRIX DMA")
-// https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA
+// Micro SD Card Module Pinout                // these pins below are known to work with this config on esp32 trinity boards by brian lough
+//sd  to tri
+//3v3 to 3v3
+//gnd to gnd
+//clk to 33
+//do  to 32
+//di  to sda
+//cs  to scl
 
-#include <AnimatedGIF.h>
+//#define HSPI_MISO 32
+//#define HSPI_MOSI 21 //trinity pin labeled SDA
+//#define HSPI_SCLK 33 
+//#define HSPI_CS 22   //trinity pin labeled SCL
 
-// Library for decoding GIFs on Arduino
+//my pin setup so my sdcard adapter (adafruit sdcard adapter) can just slot into the pin headers on the trinity board
+#define HSPI_MISO 21 //trinity pin labeled SDA
+#define HSPI_MOSI 32 
+#define HSPI_SCLK 22 //trinity pin labeled SCL
+#define HSPI_CS 33   
 
-// Search for "AnimatedGIF" in the Arduino Library manager
-// https://github.com/bitbank2/AnimatedGIF
+SPIClass *spi = NULL;
 
-// ----------------------------
-// Dependency Libraries - each one of these will need to be installed.
-// ----------------------------
-
-// Adafruit GFX library is a dependency for the matrix Library
-// Can be installed from the library manager
-// https://github.com/adafruit/Adafruit-GFX-Library
-
-
-// Library for accessing SPIFFS storage on Arduino
-#define FILESYSTEM SPIFFS
-#include <SPIFFS.h>
-
-// -------------------------------------
-// -------   Matrix Config   ------
-// -------------------------------------
+// ----------------- RGB MATRIX CONFIG ----------------- 
+// more panel setup is found in the void setup() function!
 
 const int panelResX = 64;        // Number of pixels wide of each INDIVIDUAL panel module.
 const int panelResY = 32;        // Number of pixels tall of each INDIVIDUAL panel module.
 const int panels_in_X_chain = 2; // Total number of panels in X
 const int panels_in_Y_chain = 1; // Total number of panels in Y
 
-const int totalWidth  = panelResX * panels_in_X_chain;
-const int totalHeight = panelResY * panels_in_Y_chain;
+const int totalWidth  = panelResX * panels_in_X_chain;  //used in span function
+const int totalHeight = panelResY * panels_in_Y_chain;  //used in span function
 
 MatrixPanel_I2S_DMA *dma_display = nullptr;
 
-// See the "displaySetup" method for more display config options
+uint16_t myBLACK = dma_display->color565(0, 0, 0);
+uint16_t myWHITE = dma_display->color565(255, 255, 255);
+uint16_t myRED = dma_display->color565(255, 0, 0);
+uint16_t myGREEN = dma_display->color565(0, 255, 0);
+uint16_t myBLUE = dma_display->color565(0, 0, 255);
 
-// -------------------------------------
-// ------- String read config ----------
-// -------------------------------------
 
-// Strings
-
+// ----------------- STRING READ CONFIG ----------
 String newCORE = "";             // Received Text, from MiSTer without "\n\r" currently (2021-01-11)
-String currentCORE = "";             // Buffer String for Text change detection
+String currentCORE = "";         // Buffer String for Text change detection
 char newCOREArray[30]="";        // Array of char needed for some functions, see below "newCORE.toCharArray"
 
-//------------------------------------------------------------------------------------------------------------------
 
-
-// ANIMATEDGIF LIBRARY STUFF -----------------------------------------------
-
+// ----------------- ANIMATEDGIF LIBRARY STUFF -----------
 AnimatedGIF gif;
+bool animated_flag;
 File f;
+int x_offset, y_offset;
 int16_t xPos = 0, yPos = 0; // Top-left pixel coord of GIF in matrix space
+
+
+// ----------------- GIF DRAW Gif Draw Functions -------------------------
 
 // Copy a horizontal span of pixels from a source buffer to an X,Y position
 // in matrix back buffer, applying horizontal clipping. Vertical clipping is
 // handled in GIFDraw() below -- y can safely be assumed valid here.
-
 void span(uint16_t *src, int16_t x, int16_t y, int16_t width) {
   if (x >= totalWidth) return;     // Span entirely off right of matrix
   int16_t x2 = x + width - 1;      // Rightmost pixel
@@ -106,44 +125,56 @@ void GIFDraw(GIFDRAW *pDraw) {
   s = pDraw->pPixels;
   
   // Apply the new pixels to the main image
-  if (pDraw->ucHasTransparency) { // if transparency used
+  if (pDraw->ucHasTransparency)   // if transparency used
+  {
     uint8_t *pEnd, c, ucTransparent = pDraw->ucTransparent;
     int x, iCount;
     pEnd = s + pDraw->iWidth;
     x = 0;
     iCount = 0;                   // count non-transparent pixels
-    while (x < pDraw->iWidth) {
+    while (x < pDraw->iWidth) 
+    {
       c = ucTransparent - 1;
       d = usTemp;
-      while (c != ucTransparent && s < pEnd) {
+      while (c != ucTransparent && s < pEnd) 
+      {
         c = *s++;
-        if (c == ucTransparent) { // done, stop
+        if (c == ucTransparent)   // done, stop
+        { 
           s--;                    // back up to treat it like transparent
-        } else {                  // opaque
+        } 
+        else                      // opaque
+        {                 
           *d++ = usPalette[c];
           iCount++;
         }
       }                           // while looking for opaque pixels
-      if (iCount) {               // any opaque pixels?
+      if (iCount)                 // any opaque pixels?
+      {               
         span(usTemp, xPos + pDraw->iX + x, screenY, iCount);
         x += iCount;
         iCount = 0;
       }
+      
       // no, look for a run of transparent pixels
       c = ucTransparent;
-      while (c == ucTransparent && s < pEnd) {
+      while (c == ucTransparent && s < pEnd) 
+      {
         c = *s++;
         if (c == ucTransparent)
           iCount++;
         else
           s--;
       }
-      if (iCount) {
-        x += iCount; // skip these
+      if (iCount) 
+      {
+        x += iCount;              // skip these
         iCount = 0;
       }
     }
-  } else {                         //does not have transparency
+  } 
+  else                            //does not have transparency
+  {                         
     s = pDraw->pPixels;
     // Translate the 8-bit pixels through the RGB565 palette (already byte reversed)
     for (x = 0; x < pDraw->iWidth; x++) 
@@ -194,32 +225,159 @@ int32_t GIFSeekFile(GIFFILE *pFile, int32_t iPosition)
   f->seek(iPosition);
   pFile->iPos = (int32_t)f->position();
   i = micros() - i;
-//  Serial.printf("Seek time = %d us\n", i);
+  //Serial.printf("Seek time = %d us\n", i);
   return pFile->iPos;
 } /* GIFSeekFile() */
 
 unsigned long start_tick = 0;
 
-void ShowGIF(char *name)
+void ShowGIF(char *name, bool animated)
 {
   start_tick = millis();
    
   if (gif.open(name, GIFOpenFile, GIFCloseFile, GIFReadFile, GIFSeekFile, GIFDraw))
   {
+    x_offset = (MATRIX_WIDTH - gif.getCanvasWidth()) / 2;
+    if (x_offset < 0) x_offset = 0;
+    y_offset = (MATRIX_HEIGHT - gif.getCanvasHeight()) / 2;
+    if (y_offset < 0) y_offset = 0;
     Serial.printf("Successfully opened GIF; Canvas size = %d x %d\n", gif.getCanvasWidth(), gif.getCanvasHeight());
     Serial.flush();
-    while (gif.playFrame(true, NULL))
-    {      
-      // if ( (millis() - start_tick) > 8000) { // we'll get bored after about 8 seconds of the same looping gif
-      //  break;
-      // }
+    if (animated) 
+    {
+      Serial.println("animated gif flag found, playing whole gif");
+      while(gif.playFrame(true, NULL))
+      {
+        //keep on playing unless...
+        if (Serial.available()) 
+        {
+          newCORE = Serial.readStringUntil('\n');                  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
+          Serial.println(newCORE);
+          if (newCORE!=currentCORE) 
+          {
+            break;
+          }
+        }
+      }
     }
+    else 
+    {
+      Serial.println("static gif flag found, playing 1st frame of gif");
+      while (!gif.playFrame(true, NULL))
+      { // leaving this break in here incase i need it for interrupting the the current playing gif in a future rev     
+        if ( (millis() - start_tick) > 10000) // play first frame of non-animated gif and wait 10 seconds
+        { 
+          //Serial.println("times up! breaking from play loop!");
+          break;
+        }
+        else
+        {
+          Serial.print(".");
+          if (Serial.available())
+          {
+            newCORE = Serial.readStringUntil('\n');  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
+            Serial.println(newCORE);
+            if (newCORE!=currentCORE)
+            {
+              break;
+            }
+          }
+          gif.reset();
+        }
+      }
+    }
+    Serial.println("closing gif file");
     gif.close();
   }
 
 } /* ShowGIF() */
 
-void displaySetup() {
+void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
+  Serial.printf("Listing directory: %s\n", dirname);
+
+  File root = fs.open(dirname);
+  if (!root) {
+    Serial.println("Failed to open directory");
+    return;
+  }
+  if (!root.isDirectory()) {
+    Serial.println("Not a directory");
+    return;
+  }
+
+  File file = root.openNextFile();
+  while (file) {
+    if (file.isDirectory()) {
+      Serial.print("  DIR : ");
+      Serial.println(file.name());
+      if (levels) {
+        listDir(fs, file.name(), levels - 1);
+      }
+    } else {
+      Serial.print("  FILE: ");
+      Serial.print(file.name());
+      Serial.print("  SIZE: ");
+      Serial.println(file.size());
+    }
+    file = root.openNextFile();
+  }
+}
+
+String gifDir = "/gifs"; // play all GIFs in this directory on the SD card
+char filePath[256] = { 0 };
+File root, gifFile;
+char chosenGIF[256] = { 0 };
+  
+void setup() {
+  Serial.begin(115200);
+  Serial.println();
+  
+  //Mount SD Card, display some info and list files in /gifs folder to serial output
+  Serial.println("Micro SD Card Mounting...");
+
+  spi = new SPIClass(HSPI);
+  spi->begin(HSPI_SCLK, HSPI_MISO, HSPI_MOSI, HSPI_CS);
+
+  SD.begin(HSPI_CS, *spi);
+  delay(500);
+
+  if (!SD.begin(HSPI_CS, *spi)) {
+    Serial.println("Card Mount Failed");
+    return;
+  }
+  
+  uint8_t cardType = SD.cardType();
+
+  if (cardType == CARD_NONE) {
+    Serial.println("No SD card attached");
+    return;
+  }
+
+  Serial.print("SD Card Type: ");
+
+  if (cardType == CARD_MMC) {
+    Serial.println("MMC");
+  } else if(cardType == CARD_SD){
+    Serial.println("SDSC");
+  } else if(cardType == CARD_SDHC){
+    Serial.println("SDHC");
+  } else {
+    Serial.println("UNKNOWN");
+  }
+
+  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+  Serial.printf("SD Card Size: %lluMB\n", cardSize);
+  Serial.println();
+
+  // list files in /gifs folder to serial output
+  listDir(SD, "/gifs", 0);
+  listDir(SD, "/gifs/elluigi", 0);
+  listDir(SD, "/gifs/pixelcade", 0); 
+
+  // initialize gif object
+  gif.begin(LITTLE_ENDIAN_PIXELS);
+
+  // start display
   HUB75_I2S_CFG mxconfig(
     panelResX,           // module width
     panelResY,           // module height
@@ -227,9 +385,9 @@ void displaySetup() {
   );
 
   // If you are using a 64x64 matrix you need to pass a value for the E pin
-  // The trinity connects GPIO 18 to E.
+  // The trinity connects GPIO 18 to the typical pin E.
   // This can be commented out for any smaller displays (but should work fine with it)
-  mxconfig.gpio.e = 18;
+  //mxconfig.gpio.e = 18;
 
   //swap green and blue for my specific rgb panels
   mxconfig.gpio.b1 = 26;
@@ -241,7 +399,7 @@ void displaySetup() {
   // May or may not be needed depending on your matrix
   // Example of what needing it looks like:
   // https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA/issues/134#issuecomment-866367216
-  mxconfig.clkphase = false;
+  //mxconfig.clkphase = false;
 
   // Some matrix panels use different ICs for driving them and some of them have strange quirks.
   // If the display is not working right, try this.
@@ -251,33 +409,28 @@ void displaySetup() {
   dma_display->begin();
   dma_display->setBrightness8(128); //0-255
   dma_display->clearScreen();
-} /* displaySetup() */
-
-String gifDir = "/gifs"; // play all GIFs in this directory on the SD card
-char filePath[256] = { 0 };
-File root, gifFile;
-char choosenGIF[256] = { 0 };
   
-void setup() {
-  Serial.begin(115200);
-  Serial.println();   
-
-  // Start filesystem
-  Serial.println(" * Loading SPIFFS");
-  if(!SPIFFS.begin()){
-        Serial.println("SPIFFS Mount Failed");
-  }
-
+  //screen startup test (watch for dead or misfiring pixels)
+  dma_display->fillScreen(myBLACK);
+  delay(500);
+  dma_display->fillScreen(myRED);
+  delay(500);
+  dma_display->fillScreen(myGREEN);
+  delay(500);
+  dma_display->fillScreen(myBLUE);
+  delay(500);
+  dma_display->fillScreen(myWHITE);
+  delay(500);
+  dma_display->clearScreen();
+  delay(500);
   
-
-  // initialize gif object
-  gif.begin(LITTLE_ENDIAN_PIXELS);
-
-  // start display
-  displaySetup();
-
   dma_display->setCursor(0, 0);
   dma_display->println("MiSTer FPGA");
+  delay(1000);
+
+  dma_display->fillScreen(myBLACK);
+  
+  gif.begin(LITTLE_ENDIAN_PIXELS);
   
   // setup initial core to default to menu
   currentCORE = "NULL";
@@ -286,41 +439,101 @@ void setup() {
 
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  
   if (Serial.available()) {
     newCORE = Serial.readStringUntil('\n');                  // Read string from serial until NewLine "\n" (from MiSTer's echo command) is detected or timeout (1000ms) happens.
     delay(10);
     Serial.printf("%s is oldcore, %s is newcore\n", String(currentCORE), String(newCORE));
   }
     
-  if (newCORE!=currentCORE) {                                    // Proceed only if Core Name changed
+  if (newCORE!=currentCORE)           // Proceed only if Core Name changed
+  {                                    
     Serial.printf("Running a check because %s is oldcore, %s is newcore\n", String(currentCORE), String(newCORE));
+    Serial.printf("setting animated flag to 1 since we assume animated");
+    animated_flag = true;
     // -- First Transmission --
-    if (newCORE.endsWith("QWERTZ"))   ;                      // TESTING: Process first Transmission after PowerOn/Reboot.                 
+    if (newCORE.endsWith("QWERTZ"));  // TESTING: Process first Transmission after PowerOn/Reboot.                 
     
     // -- Menu Core --
-    else if (newCORE=="MENU")       {Serial.println("read MENU");       strcpy(choosenGIF, "/gifs/mister_logo_a.gif"); }
+    else if (newCORE=="MENU")         {Serial.println("read MENU");       strcpy(chosenGIF, "/animated/M/menu.gif"); }
+    else if (newCORE=="hellbent")     {Serial.println("read hellbent");   strcpy(chosenGIF, "/static/H/h3llb3nt.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="error")        {Serial.println("read error");      strcpy(chosenGIF, "/animated/error.gif"); } //this file doesn't exist on purpose to show error handling on screen
+        
+    // -- Arcade Cores with images by h3llb3nt--
+    else if (newCORE=="1942")         {Serial.println("read 1942");      strcpy(chosenGIF, "/animated/1/1942.gif"); }
+    else if (newCORE=="atetris")      {Serial.println("read atetris");   strcpy(chosenGIF, "/animated/A/atetris.gif"); }
+    else if (newCORE=="blktiger")     {Serial.println("read blktiger");  strcpy(chosenGIF, "/animated/B/blktiger.gif"); }
+    else if (newCORE=="btime")        {Serial.println("read btime");     strcpy(chosenGIF, "/animated/B/btime.gif"); }
+    else if (newCORE=="centiped")     {Serial.println("read centipede"); strcpy(chosenGIF, "/animated/C/centiped.gif"); }
+    else if (newCORE=="centiped3")    {Serial.println("read centipede"); strcpy(chosenGIF, "/animated/C/centiped.gif"); }
+    else if (newCORE=="defender")     {Serial.println("read defender");  strcpy(chosenGIF, "/animated/D/defender.gif"); }
+    else if (newCORE=="dkong")        {Serial.println("read dkong");     strcpy(chosenGIF, "/animated/D/dkong.gif"); }
+    else if (newCORE=="digdug")       {Serial.println("read digdug");    strcpy(chosenGIF, "/animated/D/digdug.gif"); }
+    else if (newCORE=="galagamw")     {Serial.println("read galaga");    strcpy(chosenGIF, "/animated/G/galagamw.gif"); }
+    else if (newCORE=="mario")        {Serial.println("read mario");     strcpy(chosenGIF, "/animated/M/mario.gif"); }
+    else if (newCORE=="mrdo")         {Serial.println("read mrdo");      strcpy(chosenGIF, "/animated/M/mrdo.gif"); }
+    else if (newCORE=="sinistar")     {Serial.println("read sinistar");  strcpy(chosenGIF, "/animated/S/sinistar.gif"); }
+    else if (newCORE=="spyhunt")      {Serial.println("read spyhunt");   strcpy(chosenGIF, "/animated/S/spyhunt.gif"); }
+    else if (newCORE=="tapper")       {Serial.println("read tapper");    strcpy(chosenGIF, "/animated/T/tapper.gif"); }
+    else if (newCORE=="zaxxon")       {Serial.println("read zaxxon");    strcpy(chosenGIF, "/animated/Z/zaxxon.gif"); }
+    else if (newCORE=="arkanoid")     {Serial.println("read arkanoid");  strcpy(chosenGIF, "/animated/A/arkanoid.gif"); }
+
+    // -- Arcade Cores with images by eLLuigi
+    else if (newCORE=="aliensyn")     {Serial.println("read aliensyn");    strcpy(chosenGIF, "/animated/A/aliensyn.gif"); }
+    else if (newCORE=="avsp")         {Serial.println("read avsp");        strcpy(chosenGIF, "/animated/A/avsp.gif"); }
+    else if (newCORE=="altbeast")     {Serial.println("read altbeast");    strcpy(chosenGIF, "/animated/A/altbeast.gif"); }
+    else if (newCORE=="ddragon")      {Serial.println("read ddragon");     strcpy(chosenGIF, "/animated/D/ddragon.gif"); }
+    else if (newCORE=="dstlk")        {Serial.println("read dstlk");       strcpy(chosenGIF, "/animated/D/dstlk.gif"); }
+    else if (newCORE=="pacman")       {Serial.println("read pacman");      strcpy(chosenGIF, "/animated/P/pacman.gif"); }
+    else if (newCORE=="pengo")        {Serial.println("read pengo");       strcpy(chosenGIF, "/animated/P/pengo.gif"); }
+    else if (newCORE=="roadf")        {Serial.println("read roadf");       strcpy(chosenGIF, "/animated/R/roadf.gif"); }
+    else if (newCORE=="rtype")        {Serial.println("read rtype");       strcpy(chosenGIF, "/animated/R/rtype.gif"); }
+    else if (newCORE=="rygar")        {Serial.println("read rygar");       strcpy(chosenGIF, "/animated/R/rygar.gif"); }
+    else if (newCORE=="shinobi")      {Serial.println("read shinobi");     strcpy(chosenGIF, "/animated/S/shinobi.gif"); }
+    else if (newCORE=="sf")           {Serial.println("read sf");          strcpy(chosenGIF, "/animated/S/sf.gif"); }
+    else if (newCORE=="shangon")      {Serial.println("read superhangon"); strcpy(chosenGIF, "/animated/S/shangon.gif"); }
+    else if (newCORE=="tigeroad")     {Serial.println("read tigeroad");    strcpy(chosenGIF, "/animated/T/tigeroad.gif"); }
+    else if (newCORE=="timeplt")      {Serial.println("read timeplt");     strcpy(chosenGIF, "/animated/T/timeplt.gif"); }
+    else if (newCORE=="vigilant")     {Serial.println("read vigilant");    strcpy(chosenGIF, "/animated/V/vigilant.gif"); }
+    else if (newCORE=="willow")       {Serial.println("read willow");      strcpy(chosenGIF, "/animated/W/willow.gif"); }
+    else if (newCORE=="contra")       {Serial.println("read contra");      strcpy(chosenGIF, "/animated/C/contra.gif"); }
     
-    // -- Arcade Cores with images--
-    else if (newCORE=="1942")         {Serial.println("read 1942s");     strcpy(choosenGIF, "/gifs/1942.gif"); }
-    else if (newCORE=="arkanoidj")    {Serial.println("read arkanoidj");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
-    else if (newCORE=="A.ARKANOID")   {Serial.println("read A.ARKANOID");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
-    else if (newCORE=="arkanoid")     {Serial.println("read arkanoid");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
-    else if (newCORE=="arkanoiduo")   {Serial.println("read arkanoiduo");  strcpy(choosenGIF, "/gifs/arkanoid.gif"); }
-    else if (newCORE=="atetris")      {Serial.println("read atetris");   strcpy(choosenGIF, "/gifs/Tetris_ATARI.gif"); }
-    else if (newCORE=="blktiger")     {Serial.println("read blktiger");  strcpy(choosenGIF, "/gifs/blktiger.gif"); }
-    else if (newCORE=="btime")        {Serial.println("read btime");     strcpy(choosenGIF, "/gifs/burgertime.gif"); }
-    else if (newCORE=="centiped")     {Serial.println("read centipede"); strcpy(choosenGIF, "/gifs/centipede.gif"); }
-    else if (newCORE=="centiped3")    {Serial.println("read centipede"); strcpy(choosenGIF, "/gifs/centipede.gif"); }
-    else if (newCORE=="dkong")        {Serial.println("read dkong");     strcpy(choosenGIF, "/gifs/donkeykong.gif"); }
-    else if (newCORE=="digdug")       {Serial.println("read digdug");    strcpy(choosenGIF, "/gifs/digdug.gif"); }
-    else if (newCORE=="galagamw")     {Serial.println("read galaga");    strcpy(choosenGIF, "/gifs/galaga.gif"); }
-    else if (newCORE=="mario")        {Serial.println("read mario");     strcpy(choosenGIF, "/gifs/mariobros.gif"); }
-    else if (newCORE=="sinistar")     {Serial.println("read sinistar");  strcpy(choosenGIF, "/gifs/sinistar.gif"); }
-    else if (newCORE=="spyhunt")      {Serial.println("read spyhunt"); strcpy(choosenGIF, "/gifs/spyhunter.gif"); }
-    else if (newCORE=="tapper")       {Serial.println("read tapper");    strcpy(choosenGIF, "/gifs/tapper.gif"); }
-    else if (newCORE=="zaxxon")       {Serial.println("read zaxxon");    strcpy(choosenGIF, "/gifs/zaxxon.gif"); }
+    // NEOGEO Cores with images by eLLuigi
+    else if (newCORE=="MetalSlug")      {Serial.println("read MetalSlug");       strcpy(chosenGIF, "/animated/M/mslug.gif"); }
+    else if (newCORE=="NeoTurfMasters") {Serial.println("read NeoTurfMasters");  strcpy(chosenGIF, "/animated/T/turfmast.gif"); }
+
+    // -- Arcade Cores with PixelCade images
+    else if (newCORE=="baddudes")       {Serial.println("read baddudes");   strcpy(chosenGIF, "/animated/B/badduds.gif"); }
+    else if (newCORE=="dkongjr")        {Serial.println("read dkongjr");    strcpy(chosenGIF, "/animated/D/dkongjr.gif"); }
+    else if (newCORE=="gunsmoke")       {Serial.println("read gunsmoke");   strcpy(chosenGIF, "/animated/G/gunsmoke.gif"); }
+    else if (newCORE=="punisher")       {Serial.println("read punisher");   strcpy(chosenGIF, "/animated/P/punish.gif"); }
+    else if (newCORE=="robocop")        {Serial.println("read robocop");    strcpy(chosenGIF, "/animated/R/robocop.gif"); }
+    else if (newCORE=="sf2")            {Serial.println("read sf2");        strcpy(chosenGIF, "/animated/S/sf2.gif"); }
+    else if (newCORE=="xmvsf")          {Serial.println("read xmvsf");      strcpy(chosenGIF, "/animated/X/xmvsf.gif"); }
+
+    // -- non-animated images for arcade cores
+    else if (newCORE=="aerofgt")        {Serial.println("read aerofgt");    strcpy(chosenGIF, "/static/A/aerofgts.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="afighter")       {Serial.println("read afighter");   strcpy(chosenGIF, "/static/A/afighter.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="alibaba")        {Serial.println("read alibaba");    strcpy(chosenGIF, "/static/A/alibaba.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="alphamis")       {Serial.println("read alphamis");   strcpy(chosenGIF, "/static/A/alphamis.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="amatelas")       {Serial.println("read amatelas");   strcpy(chosenGIF, "/static/A/amatelas.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="amidars")        {Serial.println("read amidars");    strcpy(chosenGIF, "/static/A/amidars.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="armorcar")       {Serial.println("read armorcar");   strcpy(chosenGIF, "/static/A/armorcar.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="armwar")         {Serial.println("read armwar");     strcpy(chosenGIF, "/static/A/armwar.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="a.astdelux")     {Serial.println("read astdelux");   strcpy(chosenGIF, "/static/A/a.astdelux.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="asteroid")       {Serial.println("read asteroid");   strcpy(chosenGIF, "/static/A/asteroid.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="athena")         {Serial.println("read athena");     strcpy(chosenGIF, "/static/A/athena.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="aurail")         {Serial.println("read aurail");     strcpy(chosenGIF, "/static/A/aurail.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="azurian")        {Serial.println("read azurian");    strcpy(chosenGIF, "/static/A/azurian.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="bagman")         {Serial.println("read bagman");     strcpy(chosenGIF, "/static/B/bagman.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="ballbomb")       {Serial.println("read ballbomb");   strcpy(chosenGIF, "/static/B/ballbomb.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="bayroute")       {Serial.println("read bayroute");   strcpy(chosenGIF, "/static/B/bayroute.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="berzerk")        {Serial.println("read berzerk");    strcpy(chosenGIF, "/static/B/berzerk.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="birdiy")         {Serial.println("read birdiy");     strcpy(chosenGIF, "/static/B/birdiy.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="birdtry")        {Serial.println("read birdtry");    strcpy(chosenGIF, "/static/B/birdtry.gif"); animated_flag=!animated_flag; }
+    else if (newCORE=="bosconian")      {Serial.println("read bosconian");  strcpy(chosenGIF, "/static/B/bosco.gif"); animated_flag=!animated_flag; } //no core yet but i love this game
+    else if (newCORE=="mspacman")       {Serial.println("read mspacman");   strcpy(chosenGIF, "/static/M/mspacman.gif"); animated_flag=!animated_flag; }
+    
 
     // -- Computer Cores --
     else if (newCORE=="AcornAtom")    ;//do something
@@ -346,9 +559,9 @@ void loop() {
     else if (newCORE=="Coleco")       ;//do something
     else if (newCORE=="GAMEBOY")      ;//do something
     else if (newCORE=="GBA")          ;//do something
-    else if (newCORE=="Genesis")      {Serial.println("read Genesis");    strcpy(choosenGIF, "/gifs/sega.gif"); }
+    else if (newCORE=="Genesis")      {Serial.println("read Genesis");    strcpy(chosenGIF, "/animated/G/Genesis.gif"); }
     else if (newCORE=="MEGACD")       ;//do something
-    else if (newCORE=="NEOGEO")       ;//do something
+    else if (newCORE=="NEOGEO")       {Serial.println("read NEOGEO");    strcpy(chosenGIF, "/animated/N/NEOGEO.gif"); }
     else if (newCORE=="NES")          ;//do something
     else if (newCORE=="ODYSSEY")      ;//do something
     else if (newCORE=="ODYSSEY")      ;//do something
@@ -370,8 +583,9 @@ void loop() {
     else if (newCORE=="bye")          ;//do something
     
     // -- Unidentified Core Name --
-    else {
-      strcpy(choosenGIF, "no-match");
+    else 
+    {
+      strcpy(chosenGIF, "no-match");
       newCORE.toCharArray(newCOREArray, newCORE.length()+1);
     }  
     
@@ -380,29 +594,29 @@ void loop() {
   currentCORE=newCORE;  // Update Buffer
 
   //no core change, show the current currentCORE gif
-  Serial.printf("%s is oldcore, %s is newcore, %s is choosenGIF\n", String(currentCORE), String(newCORE), choosenGIF);
-  /*
-  if (gif.open((uint8_t *)spyhunter, sizeof(spyhunter), GIFDraw)) {
-    while (gif.playFrame(true, NULL))      
-    gif.close();
-  }
-  */
-  if (strcmp(choosenGIF,"no-match")) {
-    ShowGIF(choosenGIF);
-  } else {
+  //Serial.printf("%s is oldcore, %s is newcore, %s is chosenGIF\n", String(currentCORE), String(newCORE), chosenGIF);
+
+  if (strcmp(chosenGIF,"no-match")) 
+  {
+    if (SD.exists(chosenGIF)) 
+    {
+      ShowGIF(chosenGIF,animated_flag);
+    }
+    else
+    {
+      Serial.printf("IMAGE FILE %s NOT FOUND!\n", chosenGIF);
+      dma_display->clearScreen();
+      dma_display->setCursor(0, 0);
+      dma_display->print(chosenGIF);
+      dma_display->println(" not found");
+      delay(3000);
+    }
+  } 
+  else 
+  {
     dma_display->clearScreen();
     dma_display->setCursor(0, 0);
     dma_display->println(newCOREArray);
     delay(3000);
-  }
-
-  /*
-  newCORE.toCharArray(newCOREArray, newCORE.length()+1);
-  dma_display->clearScreen();
-  dma_display->setCursor(0, 0);
-  dma_display->println(newCOREArray);
-  delay(3000);  
-  */
-  
-  
+  }  
 } /* void loop() */
