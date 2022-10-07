@@ -1,7 +1,0 @@
-this is the original sketch that only uses spiffs. 
-i'm not going to continue working on this one since 
-there's no space left on the microcontroller. 
-its being left here for historical purposes. 
-
-if you wanna build a tty2rbgmatix you need to look 
-in the tty2rgbmatrix_sd folder for the good stuff.
