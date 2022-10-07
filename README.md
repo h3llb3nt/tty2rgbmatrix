@@ -56,12 +56,13 @@ what software you'll need:
 
 # Work In Progress
 items i'm still working on:
-- ADD MORE GIFS OF ARCADE CORES
+- ADD MORE GIFS OF ARCADE CORES - this is happening slowly, pulling from other sources as well. more to come...
 - add font library so that text that displays for cores that do not have images created are shown in a nicer way, perhaps scroll from right to left
-- modify code to use an interrupt so that marquee changes happen faster. currently the code has to wait for the gif cycle to finish before it will recognize that the image should change and for longer gifs that is not ideal
+- ~~modify code to use an interrupt so that marquee changes happen faster. currently the code has to wait for the gif cycle to finish before it will recognize that the image should change and for longer gifs that is not ideal~~
 - esp32 usually only comes with 4MB flash and a portion of that is used for code storage. current images are already filling up available space so i need to either
 	- a) COMPLETED ~~add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself~~ or 
 	- b) pull images directly from MiSTer like tty2oled does
+- change how image file is chosen based on the core name read from the MiSTer. new code assumes consistent directory structure and gif naming convention which allows for a simpler code routine to check for an animated gif for the core, a static version if no animated file was found, or to just display text if no image exists at all.
 
 # Future Options (aka not any time soon)
 - resize images/gifs that are not 128x32 'on the fly'
