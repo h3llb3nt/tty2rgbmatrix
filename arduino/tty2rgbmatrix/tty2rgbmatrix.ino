@@ -24,6 +24,24 @@
  * image fallback if animated does not exist or text display fallback if no image exists on card.
  * folder structure on SDcard looks like this:
  * SDCARDROOT
+ * │── animated
+ * │   ├── 0
+ * │   ├── 1
+ * │   │   └── 1944.gif
+ * │   ├── 2
+ * │   ├ ...
+ * │   ├── A
+ * │   ├ ...
+ * │   └── Z
+ * └── static
+ *     ├── 0
+ *     ├── 1
+ *     │   └── 1944.gif
+ *     ├── 2
+ *     ├ ...
+ *     ├── A
+ *     ├ ...
+ *     └── Z
 */
 /* tty2rgbmatrix sdcard edition 2022/09/18
  * loads gif files from an sdcard and play them on an rgb matrix based on serial input from MiSTer fpga
