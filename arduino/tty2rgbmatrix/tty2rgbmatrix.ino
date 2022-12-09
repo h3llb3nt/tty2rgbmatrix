@@ -1,3 +1,5 @@
+
+
 ///////////////////////////////////////////////////////////////
 /* This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,7 +56,8 @@
 #include <AnimatedGIF.h>                      //v1.4.7 by larry bank verifed to work
 
 #define FILESYSTEM SD
-#include "SD.h"                               //v1.2.4
+//#include "SD.h"                               //v1.2.4
+#include <SD.h>
 #include "SPI.h"
 
 // Micro SD Card Module Pinout                // these pins below are known to work with this config on esp32 trinity boards by brian lough
@@ -397,7 +400,8 @@ void setup() {
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf("SD Card Size: %lluMB\n", cardSize);
   // list files in /gifs folder to serial output
-  listDir(SD, "/", 2); 
+  // disabled 12/9/22 because this takes FOREVER to boot when the sdcard is populated and people think its not working
+  //listDir(SD, "/", 2); 
   Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
   Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
 
@@ -434,7 +438,7 @@ void setup() {
 
   dma_display = new MatrixPanel_I2S_DMA(mxconfig);
   dma_display->begin();
-  dma_display->setBrightness8(128); //0-255
+  dma_display->setBrightness8(16); //0-255
   dma_display->clearScreen();
   
   //screen startup test (watch for dead or misfiring pixels)
@@ -452,7 +456,7 @@ void setup() {
   delay(500);
   
   dma_display->setCursor(0, 0);
-  dma_display->println("MiSTer FPGA");
+  dma_display->println("tty2rgbmatrix 2022/10/08");
   delay(1000);
 
   dma_display->fillScreen(myBLACK);
