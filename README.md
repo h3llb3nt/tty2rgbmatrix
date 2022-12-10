@@ -62,7 +62,7 @@ items i'm still working on:
 - esp32 usually only comes with 4MB flash and a portion of that is used for code storage. current images are already filling up available space so i need to either
 	- a) COMPLETED ~~add optional SDcard adapter to ESP32 board so microcontroller can access images/gifs externally rather than using storage on the microcontroller itself~~ or 
 	- b) pull images directly from MiSTer like tty2oled does
-- change how image file is chosen based on the core name read from the MiSTer. new code assumes consistent directory structure and gif naming convention which allows for a simpler code routine to check for an animated gif for the core, a static version if no animated file was found, or to just display text if no image exists at all.
+- change how image files are chosen based on the core name read from the MiSTer. new sketch assumes a consistent directory structure and gif naming convention which allows for a simpler lookup routine to check for an animated gif for the core, a static version if no animated file was found, or to just display text if no image exists at all. the folder structure has been published on a separate github repo at https://github.com/h3llb3nt/marquee_gifs which is maintained by kconger, venice1200 and myself to help keep the projects consistent.
 
 # Future Options (aka not any time soon)
 - resize images/gifs that are not 128x32 'on the fly'
@@ -72,7 +72,7 @@ items i'm still working on:
 https://youtu.be/un_bDXi2HBI
 
 # Thank You!
-- i want to thanks all the members of the misterfpga.org forum who have helped and encouraged me to keep this project going; especially venice, reallarry, elluigi, moondandy and everyone else who built one of these things 
+- i want to thank all the members of the misterfpga.org forum who have helped and encouraged me to keep this project going; especially venice, reallarry, elluigi, moondandy, kconger, and everyone else on the forum 
 - i also want to thanks brian lough for giving me the bug with his tetris clock for using rgb matrix panels and for designing the trinity esp32 board
 - mrfaptastic for the matrix panel arduino library
 - larry bank for the animated gif library
